@@ -1,1 +1,13 @@
-<button (click)="getData()">gfhfghgf</button>
+<input type="text" placeholder="Enter Album" [formControl]="albumControl">
+<div>DEEZER!</div>
+<div *ngFor="let album of (this.apiService.deezerAlbums$ | async)?.data ">
+  <span><img src="{{album.cover}}"></span>
+  <span>{{album.title}}</span>
+</div>
+<pagination *ngIf="(this.apiService.deezerAlbums$ | async)?.total>25" [maxSize]="5" (pageChanged)="getDeezerData($event)"
+            [totalItems]="(this.apiService.deezerAlbums$ | async)?.total" [itemsPerPage]="25"></pagination>
+<div>ITUNES!</div>
+<div *ngFor="let album of apiService.itunesAlbums">
+  <span><img src="{{album.artworkUrl100}}"></span>
+  <span>{{album.collectionName}}</span>
+</div>

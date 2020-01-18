@@ -1,15 +1,19 @@
+import { DeezerArtist } from './deezer-artist.interface';
+
 export interface DeezerAlbum {
   id: number;
-  name: string;
+  title: string;
   link: string;
-  picture: string;
-  picture_small: string;
-  picture_medium: string;
-  picture_big: string;
-  picture_xl: string;
-  nb_album: number;
-  nb_fan: number;
-  radio: boolean;
+  cover: string;
+  cover_small: string;
+  cover_medium: string;
+  cover_big: string;
+  cover_xl: string;
+  genre_id: 113;
+  nb_tracks: 14;
+  record_type: string;
   tracklist: string;
+  artist: DeezerArtist;
+  explicit_lyrics: boolean;
   type: string;
 }
