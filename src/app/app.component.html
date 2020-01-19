@@ -1,13 +1,13 @@
-<input type="text" placeholder="Enter Album" [formControl]="albumControl">
-<div>DEEZER!</div>
-<div *ngFor="let album of (this.apiService.deezerAlbums$ | async)?.data ">
-  <span><img src="{{album.cover}}"></span>
-  <span>{{album.title}}</span>
-</div>
-<pagination *ngIf="(this.apiService.deezerAlbums$ | async)?.total>25" [maxSize]="5" (pageChanged)="getDeezerData($event)"
-            [totalItems]="(this.apiService.deezerAlbums$ | async)?.total" [itemsPerPage]="25"></pagination>
-<div>ITUNES!</div>
-<div *ngFor="let album of apiService.itunesAlbums">
-  <span><img src="{{album.artworkUrl100}}"></span>
-  <span>{{album.collectionName}}</span>
+<div class="d-flex flex-column vh-100">
+  <div class="m-1 justify-content-center row">
+    <label>
+      Artist:
+      <input type="text" placeholder="Enter at least three symbols" [formControl]="albumControl">
+    </label>
+  </div>
+  <div class="m-1 d-flex flex-fill overflow-hidden row ">
+    <app-list-of-albums *ngFor="let listOfAlbums of this.apiService.albumsInterfaces"
+                        [inputInterface]="listOfAlbums" [artist]="artist">
+    </app-list-of-albums>
+  </div>
 </div>

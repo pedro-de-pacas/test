@@ -1,0 +1,11 @@
+<h2>{{(inputInterface.subject | async).source}}</h2>
+<div class="flex-fill overflow-auto border-dark border">
+  <div *ngFor="let album of (inputInterface.subject | async).albums" class="border">
+    <span><a target="_blank" href="{{album.url}}"><img src="{{album.cover}}"></a> </span>
+    <span>{{album.name}}</span>
+  </div>
+</div>
+<pagination class="align-self-center m-1" [maxSize]="5"
+            (pageChanged)="inputInterface.apiFunction(this.artist, $event.page, inputInterface.subject).subscribe()"
+            [totalItems]="(inputInterface.subject | async).total" [itemsPerPage]="this.apiService.pageSize">
+</pagination>

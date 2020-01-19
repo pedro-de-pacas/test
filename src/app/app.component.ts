@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ApiService } from './services/api-service/api.service';
+import { ApiService } from './services/api.service';
 import { FormControl } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, mergeMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, switchMap, takeWhile } from 'rxjs/operators';
 import { forkJoin, Subscription } from 'rxjs';
+import { AlbumsComponentInterface } from './interfaces/albums-component.interface';
 
 @Component({
   selector: 'app-root',
@@ -12,36 +13,33 @@ import { forkJoin, Subscription } from 'rxjs';
 export class AppComponent implements OnInit, OnDestroy {
   title = 'test';
 
-  private albumControl: FormControl = new FormControl();
-  private observable$: Subscription;
-  private album: string;
+  public albumControl: FormControl = new FormControl(); // input control
+  private _subscription: Subscription; // key input subscription
+  public artist: string; // name of artist
 
   constructor(private apiService: ApiService) {
   }
 
   ngOnInit(): void {
-    this.observable$ = this.albumControl.valueChanges.pipe(
-      debounceTime(400),
-      distinctUntilChanged(),
-      mergeMap((album: string) => {
-        this.album = album;
+    this._subscription = this.albumControl.valueChanges.pipe(
+      debounceTime(1000), // debounce 1 sec
+      distinctUntilChanged(), // search only if value changes
+      filter((album: string) => {
+        return album.length > 2; // search only if string contains more than 2 symbols
+      }),
+      switchMap((album: string) => {
+        this.artist = album;
         return forkJoin(
-          [this.apiService.getAlbumsFromDeezer(album, 1),
-            this.apiService.getAlbumsFromApple(album)]);
-      })).subscribe();
+          this.apiService.albumsInterfaces.map(
+            (albumInterface: AlbumsComponentInterface) => {
+              return albumInterface.apiFunction(this.artist, 1, albumInterface.subject);
+            }));
+      })
+    ).subscribe();
+    this.albumControl.setValue('Madonna'); // start search string
   }
 
   ngOnDestroy(): void {
-    this.observable$.unsubscribe();
-  }
-
-  getDeezerData(pageEvent: { page: number, itemsPerPage: number }) {
-    this.apiService.getAlbumsFromDeezer(this.album, pageEvent.page).subscribe();
-  }
-
-  getAppleData() {
-    this.apiService.getAlbumsFromApple(this.album).subscribe((data) => {
-      console.log(data);
-    });
+    this._subscription.unsubscribe(); // avoid memory leak
   }
 }
