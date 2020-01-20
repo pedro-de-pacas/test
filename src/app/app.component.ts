@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ApiService } from './services/api.service';
 import { FormControl } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, filter, switchMap, takeWhile } from 'rxjs/operators';
-import { forkJoin, Subscription } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, switchMap } from 'rxjs/operators';
+import { forkJoin, of, Subscription } from 'rxjs';
 import { AlbumsComponentInterface } from './interfaces/albums-component.interface';
 
 @Component({
@@ -34,8 +34,12 @@ export class AppComponent implements OnInit, OnDestroy {
             (albumInterface: AlbumsComponentInterface) => {
               return albumInterface.apiFunction(this.artist, 1, albumInterface.subject);
             }));
-      })
-    ).subscribe();
+      }),
+      catchError((e) => {
+          console.error(e);
+          return of(e);
+        }
+      )).subscribe();
     this.albumControl.setValue('Madonna'); // start search string
   }
 

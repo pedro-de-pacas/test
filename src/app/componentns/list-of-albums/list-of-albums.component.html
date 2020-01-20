@@ -6,6 +6,6 @@
   </div>
 </div>
 <pagination class="align-self-center m-1" [maxSize]="5"
-            (pageChanged)="inputInterface.apiFunction(this.artist, $event.page, inputInterface.subject).subscribe()"
+            (pageChanged)="pageChanged($event)"
             [totalItems]="(inputInterface.subject | async).total" [itemsPerPage]="this.apiService.pageSize">
 </pagination>
